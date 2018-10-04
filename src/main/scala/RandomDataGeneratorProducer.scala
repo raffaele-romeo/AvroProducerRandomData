@@ -1,4 +1,3 @@
-import SerializerType.Serializer
 import org.apache.avro._
 import org.slf4j.LoggerFactory
 
@@ -23,9 +22,9 @@ object RandomDataGeneratorProducer {
     val values = getRandomData(schemaRegistryUrl, schemaName + "-value", numberRecord).toList
 
     serializerType match {
-      case SerializerType.STRING =>
+      case Serializer.STRING =>
         values.foreach(value => producer.send(topic, value.toString))
-      case SerializerType.AVRO =>
+      case Serializer.AVRO =>
         values.foreach(value => producer.send(topic, value))
       case _ =>
         throw new Exception("Type of serialization not valid")
@@ -40,11 +39,11 @@ object RandomDataGeneratorProducer {
     val keysValues = keys zip values
 
     serializerType match {
-      case SerializerType.STRING =>
+      case Serializer.STRING =>
         keysValues.foreach {
           case (key, value) => producer.send(topic, key.toString, value.toString)
         }
-      case SerializerType.AVRO =>
+      case Serializer.AVRO =>
         keysValues.foreach {
           case (key, value) => producer.send(topic, key, value)
         }
