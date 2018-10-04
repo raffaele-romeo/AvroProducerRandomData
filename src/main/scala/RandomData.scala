@@ -25,6 +25,7 @@ class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[
 
   private def generate(schema: Schema, random: Random, d: Int): Any = {
     val TIMESTAMP_TO_START: Long = 1443866555
+
     schema.getType match {
       case Type.RECORD =>
         val record = new GenericData.Record(schema)

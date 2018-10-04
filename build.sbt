@@ -1,3 +1,5 @@
+import sbt.util
+
 name := "AvroProducerRandomData"
 
 lazy val commonSettings = Seq(
@@ -19,18 +21,19 @@ fork in Test := true
 javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
 parallelExecution in Test := false
 updateOptions := updateOptions.value.withCachedResolution(true)
-logLevel := Level.Error
+logLevel := util.Level.Warn
 
 lazy val root = (project in file("."))
   .enablePlugins(DockerComposePlugin)
   .settings(commonSettings: _*)
   .settings(
-    assemblyJarName in assembly := "test.jar",
-    mainClass in assembly := Some("Main"),
+    assemblyJarName in assembly := "AvroProducerRandomData.jar",
+    mainClass in assembly := Some("ProduceData"),
     libraryDependencies ++= Seq(
       "org.apache.kafka" %% "kafka" % "1.0.0",
       "io.confluent" % "kafka-avro-serializer" % "4.0.0",
       "org.apache.avro" % "avro" % "1.8.2",
+      "com.typesafe" % "config" % "1.3.3"
     ),
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
@@ -42,6 +45,6 @@ test in assembly := Seq(
   (test in Test).value
 )
 
-//dockerImageCreationTask := docker.value
+dockerImageCreationTask := docker.value
 
 
