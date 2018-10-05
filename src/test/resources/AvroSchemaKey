@@ -1,0 +1,1 @@
+{"schema":"{\"type\":\"record\",\"name\":\"PortabilityEvent\",\"namespace\":\"com.sky.dap.eu_portability.model.portability_activity\",\"fields\":[{\"name\":\"eventId\",\"type\":\"string\"}]}"}

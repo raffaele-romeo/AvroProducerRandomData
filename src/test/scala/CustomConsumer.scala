@@ -15,6 +15,7 @@ case class CustomConsumer(brokerList: String, schemaRegistryUrl: String,
   props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer)
   props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer)
   props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+  props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")
 
   props.put(SCHEMA_REGISTRY, schemaRegistryUrl)
   //props.put(AVRO_READER, "true")

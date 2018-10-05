@@ -1,30 +1,8 @@
-import RandomDataGeneratorProducer.getRandomDataBasedOnSchema
 import org.apache.avro._
 import org.slf4j.LoggerFactory
 
 object RandomDataGeneratorProducer {
   private val logger = LoggerFactory.getLogger(RandomDataGeneratorProducer.getClass)
-
-  /*
-  def produce(schemaRegistryUrl: String, schemaName: String, numberRecord: Int, producer: CustomProducer,
-              topic: String, hasKey: Boolean, serializerType: Serializer): Unit = {
-
-    if (hasKey) {
-      val keys = getRandomDataBasedOnSchema(schemaRegistryUrl, schemaName + "-key", numberRecord).toList
-      val values = getRandomDataBasedOnSchema(schemaRegistryUrl, schemaName + "-value", numberRecord).toList
-      val keysValues = keys zip values
-
-      produceKeyValueMasseges(producer, serializerType, keysValues, topic)
-    }
-    else {
-      val values = getRandomDataBasedOnSchema(schemaRegistryUrl, schemaName + "-value", numberRecord).toList
-
-      produceValueMasseges(producer, serializerType, values, topic)
-    }
-
-    producer.producer.flush()
-  }
-  */
 
   def produceMasseges(producer: CustomProducer, serializerType: Serializer, records: Seq[Any], topic: String): Unit = {
 
@@ -44,6 +22,7 @@ object RandomDataGeneratorProducer {
 
     }
 
+    producer.producer.flush()
   }
 
   def getRecordsToWrite(schemaRegistryUrl: String, schemaName: String, numberRecord: Int, hasKey: Boolean): Seq[Any] = {
@@ -60,21 +39,6 @@ object RandomDataGeneratorProducer {
     }
 
   }
-
-/*
-  private def produceMasseges(producer: CustomProducer, serializerType: Serializer, records: List[Any], topic: String): Unit = {
-
-    serializerType match {
-      case Serializer.STRING =>
-        records.foreach(value => producer.send(topic, value.toString))
-      case Serializer.AVRO =>
-        records.foreach(value => producer.send(topic, value))
-      case _ =>
-        throw new Exception("Type of serialization not valid")
-    }
-  }
-  */
-
 
   private def getRandomDataBasedOnSchema(schemaRegistryUrl: String, schemaName: String, numberRecord: Int): Iterator[Any] = {
 
