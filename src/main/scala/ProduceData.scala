@@ -34,11 +34,6 @@ object ProduceData {
 
     RandomDataGeneratorProducer.produceMasseges(CustomProducer.instance,serializerType, records, topicName)
 
-    /*
-    RandomDataGeneratorProducer.produce(schemaRegistryUrl, schemaName, numberRecord, CustomProducer.instance,
-      topicName, hasKey, serializerType)
-     */
-
     logger.info("PRODUCER FINISHED")
   }
 

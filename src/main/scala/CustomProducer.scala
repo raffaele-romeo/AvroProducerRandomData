@@ -23,11 +23,11 @@ case class CustomProducer(brokerList: String, schemaRegistry: String,
   val producer = new KafkaProducer[Any, Any](producerProps)
 
   def send(topic: String, key: Any, value: Any): Unit = {
-    producer.send(new ProducerRecord[Any, Any](topic, key, value)).get()
+    producer.send(new ProducerRecord[Any, Any](topic, key, value))
   }
 
   def send(topic: String, value: Any): Unit = {
-    producer.send(new ProducerRecord(topic, value)).get()
+    producer.send(new ProducerRecord(topic, value))
   }
 }
 

@@ -1,4 +1,3 @@
-
 import java.nio.ByteBuffer
 import java.util
 
@@ -8,6 +7,7 @@ import org.apache.avro.generic.GenericData
 import org.apache.avro.util.Utf8
 
 import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+
 import scala.util.Random
 
 class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[Any] {
