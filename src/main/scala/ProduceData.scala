@@ -11,7 +11,6 @@ object ProduceData {
   )
 
   def main(args: Array[String]): Unit = {
-    //TODO TEST
     val config: Config = ConfigFactory.load().getConfig("main")
 
     val brokers = config.getString("brokersList")
@@ -30,8 +29,15 @@ object ProduceData {
 
     logger.info("PRODUCER STARTED")
 
+
+    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
+
+    RandomDataGeneratorProducer.produceMasseges(CustomProducer.instance,serializerType, records, topicName)
+
+    /*
     RandomDataGeneratorProducer.produce(schemaRegistryUrl, schemaName, numberRecord, CustomProducer.instance,
       topicName, hasKey, serializerType)
+     */
 
     logger.info("PRODUCER FINISHED")
   }

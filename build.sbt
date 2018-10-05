@@ -24,7 +24,7 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 logLevel := util.Level.Warn
 
 lazy val root = (project in file("."))
-  .enablePlugins(DockerComposePlugin)
+  .enablePlugins(DockerPlugin, DockerComposePlugin)
   .settings(commonSettings: _*)
   .settings(
     assemblyJarName in assembly := "AvroProducerRandomData.jar",
@@ -33,7 +33,10 @@ lazy val root = (project in file("."))
       "org.apache.kafka" %% "kafka" % "1.0.0",
       "io.confluent" % "kafka-avro-serializer" % "4.0.0",
       "org.apache.avro" % "avro" % "1.8.2",
-      "com.typesafe" % "config" % "1.3.3"
+      "com.typesafe" % "config" % "1.3.3",
+
+      //TEST
+      "org.scalatest" %% "scalatest" % "3.0.5" % "test"
     ),
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
@@ -45,6 +48,5 @@ test in assembly := Seq(
   (test in Test).value
 )
 
-dockerImageCreationTask := docker.value
 
 
