@@ -61,14 +61,14 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     consumer.subscribe(util.Collections.singletonList(topicName))
 
-    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(1000)
+    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(100)
     var recordsPolledCount = recordsPolled.count()
 
     while(recordsPolledCount == 0) {
-      recordsPolled =  consumer.poll(1000)
+      recordsPolled =  consumer.poll(100)
       recordsPolledCount = recordsPolled.count()
-      consumer.commitSync()
     }
+    consumer.commitSync()
 
     assert(recordsPolledCount == numberRecord)
 
@@ -99,14 +99,14 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     consumer.subscribe(util.Collections.singletonList(topicName))
 
-    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(1000)
+    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(100)
     var recordsPolledCount = recordsPolled.count()
 
     while(recordsPolledCount == 0) {
-      recordsPolled =  consumer.poll(1000)
+      recordsPolled =  consumer.poll(100)
       recordsPolledCount = recordsPolled.count()
-      consumer.commitSync()
     }
+    consumer.commitSync()
 
     assert(recordsPolledCount == numberRecord)
 
@@ -137,14 +137,14 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     consumer.subscribe(util.Collections.singletonList(topicName))
 
-    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(1000)
+    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(100)
     var recordsPolledCount = recordsPolled.count()
 
     while(recordsPolledCount == 0) {
-      recordsPolled =  consumer.poll(1000)
+      recordsPolled =  consumer.poll(100)
       recordsPolledCount = recordsPolled.count()
-      consumer.commitSync()
     }
+    consumer.commitSync()
 
     assert(recordsPolledCount == numberRecord)
 
@@ -175,19 +175,18 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     consumer.subscribe(util.Collections.singletonList(topicName))
 
-    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(1000)
+    var recordsPolled: ConsumerRecords[Any, Any] = consumer.poll(100)
     var recordsPolledCount = recordsPolled.count()
 
     while(recordsPolledCount == 0) {
-      recordsPolled =  consumer.poll(1000)
+      recordsPolled =  consumer.poll(100)
       recordsPolledCount = recordsPolled.count()
-      consumer.commitSync()
     }
+    consumer.commitSync()
 
     assert(recordsPolledCount == numberRecord)
 
     assert(recordsPolled.asScala.head.key() == records.head.asInstanceOf[(Any, Any)]._1.toString)
     assert(recordsPolled.asScala.head.value() == records.head.asInstanceOf[(Any, Any)]._2.toString)
   }
-
 }
