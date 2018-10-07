@@ -6,7 +6,8 @@ import org.apache.avro.Schema.Type
 import org.apache.avro.generic.GenericData
 import org.apache.avro.util.Utf8
 
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+import scala.collection.JavaConversions._
+
 
 import scala.util.Random
 

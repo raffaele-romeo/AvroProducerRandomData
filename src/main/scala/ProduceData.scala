@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 object ProduceData {
   private val logger = LoggerFactory.getLogger(ProduceData.getClass)
 
-
   val CHOOSE_SERIALIZER: Map[Serializer, String] = Map[Serializer, String](
     Serializer.AVRO -> "io.confluent.kafka.serializers.KafkaAvroSerializer",
     Serializer.STRING -> "org.apache.kafka.common.serialization.StringSerializer"
@@ -21,7 +20,6 @@ object ProduceData {
     val hasKey = config.getBoolean("hasKey")
     val serializerType = config.getEnum[Serializer](classOf[Serializer], "serializerType")
 
-
     CustomProducer.brokerList = brokers
     CustomProducer.schemaRegistry = schemaRegistryUrl
     CustomProducer.keySerializer = CHOOSE_SERIALIZER(serializerType)
@@ -29,10 +27,9 @@ object ProduceData {
 
     logger.info("PRODUCER STARTED")
 
+    val records: Iterator[Any] = RandomDataProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
-
-    RandomDataGeneratorProducer.produceMasseges(CustomProducer.instance,serializerType, records, topicName)
+    RandomDataProducer.produceMessages(CustomProducer.instance, serializerType, records, topicName)
 
     logger.info("PRODUCER FINISHED")
   }

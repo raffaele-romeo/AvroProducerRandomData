@@ -5,7 +5,7 @@ name := "AvroProducerRandomData"
 lazy val commonSettings = Seq(
   version := "0.1-SNAPSHOT",
   organization := "com.sky",
-  scalaVersion := "2.12.7",
+  scalaVersion := "2.11.6",
   test in assembly := {}
 )
 
@@ -17,7 +17,7 @@ resolvers ++= Seq(
   "snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-crossScalaVersions := Seq("2.11.6", "2.12.7")
+//crossScalaVersions := Seq("2.11.6", "2.12.7")
 fork in Test := true
 javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
 parallelExecution in Test := false
@@ -35,7 +35,6 @@ lazy val root = (project in file("."))
       "io.confluent" % "kafka-avro-serializer" % "4.0.0",
       "org.apache.avro" % "avro" % "1.8.2",
       "com.typesafe" % "config" % "1.3.3",
-      "org.scala-lang" % "scala-library" % "2.12.7",
 
       //TEST
       "org.scalatest" %% "scalatest" % "3.0.5" % "test"

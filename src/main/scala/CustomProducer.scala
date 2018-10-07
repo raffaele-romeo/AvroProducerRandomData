@@ -1,6 +1,9 @@
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+import java.util.concurrent.Future
+
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord, RecordMetadata}
 
 import scala.collection.JavaConverters._
+
 
 case class CustomProducer(brokerList: String, schemaRegistry: String,
                           keySerializer: String, valueSerializer: String) {
@@ -22,11 +25,11 @@ case class CustomProducer(brokerList: String, schemaRegistry: String,
 
   val producer = new KafkaProducer[Any, Any](producerProps)
 
-  def send(topic: String, key: Any, value: Any): Unit = {
+  def send(topic: String, key: Any, value: Any): Future[RecordMetadata] = {
     producer.send(new ProducerRecord[Any, Any](topic, key, value))
   }
 
-  def send(topic: String, value: Any): Unit = {
+  def send(topic: String, value: Any): Future[RecordMetadata] = {
     producer.send(new ProducerRecord(topic, value))
   }
 }
