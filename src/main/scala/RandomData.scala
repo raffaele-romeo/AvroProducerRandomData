@@ -6,31 +6,30 @@ import org.apache.avro.Schema.Type
 import org.apache.avro.generic.GenericData
 import org.apache.avro.util.Utf8
 
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+import collection.JavaConverters._
+import collection.mutable._
 
 import scala.util.Random
 
-class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[Any] {
+class RandomData(seed: Long) {
 
   /*
    * A secondary constructor.
    */
-  def this(schema: Schema, countRecord: Int) {
-    this(schema, countRecord, System.currentTimeMillis())
+  def this() {
+    this(System.currentTimeMillis())
   }
 
-  override def iterator: Iterator[Any] = {
-    new RandomDataIterator
-  }
+  private val random = new Random(seed)
 
-  private def generate(schema: Schema, random: Random, d: Int): Any = {
+  def generate(schema: Schema, d: Int = 0): Any = {
     val TIMESTAMP_TO_START: Long = 1443866555
 
     schema.getType match {
       case Type.RECORD =>
         val record = new GenericData.Record(schema)
-        for (entry <- schema.getFields.toList) {
-          record.put(entry.name, generate(entry.schema, random, d + 1))
+        for (entry <- schema.getFields.asScala.toList) {
+          record.put(entry.name, generate(entry.schema, d + 1))
         }
         record
       case Type.ENUM =>
@@ -40,19 +39,19 @@ class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[
         val length = (random.nextInt(5) + 2) - d
         val array = new GenericData.Array[Any](if (length <= 0) 0 else length, schema)
         for (i <- 0 until length) {
-          array.add(generate(schema.getElementType, random, d + 1))
+          array.add(generate(schema.getElementType, d + 1))
         }
         array
       case Type.MAP =>
         val length = (random.nextInt(5) + 2) - d
         val map = new util.HashMap[Any, Any](if (length <= 0) 0 else length)
         for (i <- 0 until length) {
-          map.put(randomUtf8(random, 20), generate(schema.getValueType, random, d + 1))
+          map.put(randomUtf8(random, 20), generate(schema.getValueType, d + 1))
         }
         map
       case Type.UNION =>
         val types = schema.getTypes
-        generate(types.get(random.nextInt(types.size)), random, d)
+        generate(types.get(random.nextInt(types.size)), d)
       case Type.FIXED =>
         val bytes = new Array[Byte](schema.getFixedSize)
         random.nextBytes(bytes)
@@ -78,9 +77,10 @@ class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[
         throw new RuntimeException("Unknown type: " + schema)
     }
   }
+
   private def randomUtf8(random: Random, maxLenght: Int): Utf8 = {
     val rand = StringBuilder.newBuilder
-    for (i <- 0 until maxLenght){
+    for (i <- 0 until maxLenght) {
       rand.append((97 + random.nextInt(25)).toChar)
     }
     new Utf8().set(rand.toString())
@@ -91,19 +91,5 @@ class RandomData(schema: Schema, countRecord: Int, seed: Long) extends Iterable[
     bytes.limit(bytes.capacity)
     rand.nextBytes(bytes.array)
     bytes
-  }
-
-  class RandomDataIterator extends Iterator[Any] {
-    private var n: Int = 0
-    private val random = new Random(seed)
-
-    override def hasNext: Boolean = {
-      n.<(countRecord)
-    }
-
-    override def next(): Any = {
-      n = n + 1
-      generate(schema, random, 0)
-    }
   }
 }

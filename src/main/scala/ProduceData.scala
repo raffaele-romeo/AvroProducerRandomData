@@ -21,20 +21,31 @@ object ProduceData {
     val hasKey = config.getBoolean("hasKey")
     val serializerType = config.getEnum[Serializer](classOf[Serializer], "serializerType")
 
-
     CustomProducer.brokerList = brokers
     CustomProducer.schemaRegistry = schemaRegistryUrl
     CustomProducer.keySerializer = CHOOSE_SERIALIZER(serializerType)
     CustomProducer.valueSerializer = CHOOSE_SERIALIZER(serializerType)
 
-    logger.info("PRODUCER STARTED")
+    val randomDataProducer = RandomDataProducer(CustomProducer.instance, serializerType, hasKey,
+      schemaRegistryUrl, schemaName, topicName)
 
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
+    logger.info("Start to generated random data")
 
-    RandomDataGeneratorProducer.produceMasseges(CustomProducer.instance,serializerType, records, topicName)
+    for (i <- 0 to numberRecord) {
 
-    logger.info("PRODUCER FINISHED")
+      val record = randomDataProducer.generateRecord
+      randomDataProducer.produce(record)
+
+    }
+
+    try {
+      CustomProducer.instance.producer.close()
+    }catch {
+      case e: Exception => None
+    }
+
+    logger.info("Producer finished")
   }
 
 }

@@ -11,10 +11,10 @@ case class CustomConsumer(brokerList: String, schemaRegistryUrl: String,
 
   val props = new Properties()
   props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList)
-  props.put(ConsumerConfig.GROUP_ID_CONFIG, "group-0")
+  props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-consumer-group")
   props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer)
   props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer)
-  props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+  //props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")
   props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "16384")
 
@@ -22,7 +22,5 @@ case class CustomConsumer(brokerList: String, schemaRegistryUrl: String,
   //props.put(AVRO_READER, "true")
 
 
-  val consumer = new KafkaConsumer[Any, Any](props)
-
-  consumer
+   val consumer = new KafkaConsumer[Any, Any](props)
 }

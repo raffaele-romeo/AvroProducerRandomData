@@ -18,8 +18,8 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
   val schemaRegistryUrl: String = "http://" + System.getProperty("schema_registry:8081")
   val schemaName: String = "gb.portability.activity"
 
-  val schemaValue: String = scala.io.Source.fromResource("AvroSchemaValue").getLines.mkString
-  val schemaKey: String = scala.io.Source.fromResource("AvroSchemaKey").getLines.mkString
+  val schemaValue: String = scala.io.Source.fromURL(getClass.getResource("/AvroSchemaValue")).getLines.mkString
+  val schemaKey: String = scala.io.Source.fromURL(getClass.getResource("/AvroSchemaKey")).getLines.mkString
 
   val curlSchemaValue = Seq("curl", "-X", "POST", "-H", "Content-Type: application/vnd.schemaregistry.v1+json", "--data",
     s"$schemaValue", schemaRegistryUrl + "/subjects/" + schemaName + "-value/versions")
@@ -43,19 +43,14 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
     val keyDeserializer = CHOOSE_DESERIALIZER(serializerType)
     val valueDeserializer = CHOOSE_DESERIALIZER(serializerType)
 
-    CustomProducer.brokerList = brokers
-    CustomProducer.schemaRegistry = schemaRegistryUrl
-    CustomProducer.keySerializer = CHOOSE_SERIALIZER(serializerType)
-    CustomProducer.valueSerializer = CHOOSE_SERIALIZER(serializerType)
+    val producer = CustomProducer(brokers, schemaRegistryUrl, CHOOSE_SERIALIZER(serializerType), CHOOSE_SERIALIZER(serializerType))
 
-    val producer = CustomProducer.instance
+    val randomDataProducer = RandomDataProducer(producer, serializerType, hasKey,
+      schemaRegistryUrl, schemaName, topicName)
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
-
-    assert(records.size == numberRecord)
-
-    RandomDataGeneratorProducer.produceMasseges(producer, serializerType, records, topicName)
-    //producer.producer.close()
+    val record = randomDataProducer.generateRecord
+    randomDataProducer.produce(record)
+    producer.producer.close()
 
     val consumer = CustomConsumer(brokers, schemaRegistryUrl, keyDeserializer, valueDeserializer).consumer
 
@@ -72,8 +67,8 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     assert(recordsPolledCount == numberRecord)
 
-    assert(recordsPolled.asScala.head.key() == records.head.asInstanceOf[(Any, Any)]._1)
-    assert(recordsPolled.asScala.head.value() == records.head.asInstanceOf[(Any, Any)]._2)
+    assert(recordsPolled.asScala.head.key() == record.asInstanceOf[(Any, Any)]._1)
+    assert(recordsPolled.asScala.head.value() == record.asInstanceOf[(Any, Any)]._2)
   }
 
   "Produce avro data type without key" should "write record in kafka topic" in {
@@ -88,11 +83,11 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     val producer = CustomProducer(brokers, schemaRegistryUrl, CHOOSE_SERIALIZER(serializerType), CHOOSE_SERIALIZER(serializerType))
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
+    val randomDataProducer = RandomDataProducer(producer, serializerType, hasKey,
+      schemaRegistryUrl, schemaName, topicName)
 
-    assert(records.size == numberRecord)
-
-    RandomDataGeneratorProducer.produceMasseges(producer, serializerType, records, topicName)
+    val record = randomDataProducer.generateRecord
+    randomDataProducer.produce(record)
     producer.producer.close()
 
     val consumer = CustomConsumer(brokers, schemaRegistryUrl, keyDeserializer, valueDeserializer).consumer
@@ -111,7 +106,7 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
     assert(recordsPolledCount == numberRecord)
 
     assert(recordsPolled.asScala.head.key() == null)
-    assert(recordsPolled.asScala.head.value() == records.head)
+    assert(recordsPolled.asScala.head.value() == record)
   }
 
   "Produce string data type without key" should "write record in kafka topic" in {
@@ -126,11 +121,11 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     val producer = CustomProducer(brokers, schemaRegistryUrl, CHOOSE_SERIALIZER(serializerType), CHOOSE_SERIALIZER(serializerType))
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
+    val randomDataProducer = RandomDataProducer(producer, serializerType, hasKey,
+      schemaRegistryUrl, schemaName, topicName)
 
-    assert(records.size == numberRecord)
-
-    RandomDataGeneratorProducer.produceMasseges(producer, serializerType, records, topicName)
+    val record = randomDataProducer.generateRecord
+    randomDataProducer.produce(record)
     producer.producer.close()
 
     val consumer = CustomConsumer(brokers, schemaRegistryUrl, keyDeserializer, valueDeserializer).consumer
@@ -149,7 +144,7 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
     assert(recordsPolledCount == numberRecord)
 
     assert(recordsPolled.asScala.head.key() == null)
-    assert(recordsPolled.asScala.head.value() == records.head.toString)
+    assert(recordsPolled.asScala.head.value() == record.toString)
   }
 
   "Produce string data type with key" should "write record in kafka topic" in {
@@ -164,11 +159,11 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     val producer = CustomProducer(brokers, schemaRegistryUrl, CHOOSE_SERIALIZER(serializerType), CHOOSE_SERIALIZER(serializerType))
 
-    val records: Seq[Any] = RandomDataGeneratorProducer.getRecordsToWrite(schemaRegistryUrl, schemaName, numberRecord, hasKey)
+    val randomDataProducer = RandomDataProducer(producer, serializerType, hasKey,
+      schemaRegistryUrl, schemaName, topicName)
 
-    assert(records.size == numberRecord)
-
-    RandomDataGeneratorProducer.produceMasseges(producer, serializerType, records, topicName)
+    val record = randomDataProducer.generateRecord
+    randomDataProducer.produce(record)
     producer.producer.close()
 
     val consumer = CustomConsumer(brokers, schemaRegistryUrl, keyDeserializer, valueDeserializer).consumer
@@ -186,7 +181,7 @@ class ProduceDataTest extends UnitSpec with BeforeAndAfterAll {
 
     assert(recordsPolledCount == numberRecord)
 
-    assert(recordsPolled.asScala.head.key() == records.head.asInstanceOf[(Any, Any)]._1.toString)
-    assert(recordsPolled.asScala.head.value() == records.head.asInstanceOf[(Any, Any)]._2.toString)
+    assert(recordsPolled.asScala.head.key() == record.asInstanceOf[(Any, Any)]._1.toString)
+    assert(recordsPolled.asScala.head.value() == record.asInstanceOf[(Any, Any)]._2.toString)
   }
 }
