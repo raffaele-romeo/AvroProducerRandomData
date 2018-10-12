@@ -28,11 +28,11 @@ case class CustomProducer(brokerList: String, schemaRegistry: String,
   val producer = new KafkaProducer[Any, Any](producerProps)
 
   def send(topic: String, key: Any, value: Any) = {
-    producer.send(new ProducerRecord[Any, Any](topic, key, value)) /*, new CustomCallback()) */
+    producer.send(new ProducerRecord[Any, Any](topic, key, value))
   }
 
   def send(topic: String, value: Any) = {
-    producer.send(new ProducerRecord(topic, value)) /*, new CustomCallback()) */
+    producer.send(new ProducerRecord(topic, value))
   }
 
   class CustomCallback extends Callback {
